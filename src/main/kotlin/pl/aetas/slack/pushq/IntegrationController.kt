@@ -1,6 +1,6 @@
 package pl.aetas.slack.pushq
 
-class IntegrationController(private val userMappingService: UserMappingService) {
+class IntegrationController(private val userMappingService: UserMappingService, val lookupState: PlayersLookupState) {
 
     fun registerUser(slackUsername: String, pushqUsername: String): SlackResponse {
         try {
@@ -12,7 +12,19 @@ class IntegrationController(private val userMappingService: UserMappingService) 
     }
 
     fun startLookingForPlayers(slackUsername: String): SlackResponse {
-        TODO()
+        val player = userMappingService.getPlayerBySlackUsername(slackUsername)
+
+        if (player == null) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "You are not registered yet. Register with \"/foos register [your_username]\".")
+        }
+        try {
+            lookupState.start(player);
+        } catch (e: IllegalStateChangeException) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "Someone else is already looking for players use \"/foos +1\" instead.")
+        }
+        return SlackResponse(SlackResponseType.in_channel, "")
     }
 
     fun addUser(slackUsername: String): SlackResponse {
