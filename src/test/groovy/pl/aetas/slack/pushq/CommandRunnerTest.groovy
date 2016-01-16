@@ -33,4 +33,22 @@ class CommandRunnerTest extends Specification {
     then:
     userMappingService.getPushqUsername('slackUser') == null
   }
+
+  def "should give information about registered user for command: register someUser"() {
+    given:
+    pushqSystem.users() >> ['someUser']
+    when:
+    def response = commandRunner.run('slackUser', 'register someUser');
+    then:
+    response.text == "You have been registered as: someUser"
+  }
+
+  def "should give error mesage when given user name does not exist in PushQ system"() {
+    given:
+    pushqSystem.users() >> ['existingUser']
+    when:
+    def response = commandRunner.run('slackUser', 'register nonExistingUser');
+    then:
+    response.text == 'ERROR: user "nonExistingUser" has not been found in PushQ system'
+  }
 }
