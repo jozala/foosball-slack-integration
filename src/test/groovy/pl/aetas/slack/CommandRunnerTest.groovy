@@ -2,10 +2,10 @@ package pl.aetas.slack
 
 import pl.aetas.slack.command.CommandParser
 import pl.aetas.slack.command.CommandRunner
-import pl.aetas.slack.control.PlayersLookupState
-import pl.aetas.slack.control.PlayersLookupStateManager
-import pl.aetas.slack.control.SlackResponseType
-import pl.aetas.slack.control.TeamsCalculator
+import pl.aetas.slack.state.PlayersLookupState
+import pl.aetas.slack.state.PlayersLookupStateManager
+import pl.aetas.slack.state.SlackResponseType
+import pl.aetas.slack.state.TeamsCalculator
 import pl.aetas.slack.pushq.PushqSystem
 import pl.aetas.slack.mapping.Player
 import pl.aetas.slack.mapping.UserMappingService

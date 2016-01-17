@@ -1,4 +1,4 @@
-package pl.aetas.slack.control
+package pl.aetas.slack.state
 
 data class SlackResponse(val responseType: SlackResponseType, val text: String, val attachments: List<SlackAttachment> = emptyList())
 

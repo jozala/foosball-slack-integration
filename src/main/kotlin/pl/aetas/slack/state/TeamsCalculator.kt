@@ -1,4 +1,4 @@
-package pl.aetas.slack.control
+package pl.aetas.slack.state
 
 import pl.aetas.slack.mapping.Player
 

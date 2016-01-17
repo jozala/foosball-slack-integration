@@ -1,40 +1,40 @@
 package pl.aetas.slack.command
 
-import pl.aetas.slack.control.PlayersLookupStateManager
-import pl.aetas.slack.control.SlackResponse
+import pl.aetas.slack.state.PlayersLookupStateManager
+import pl.aetas.slack.state.SlackResponse
 
-class CommandParser(val controller: PlayersLookupStateManager) {
+class CommandParser(val stateManager: PlayersLookupStateManager) {
 
     fun parseCommand(text: String): (slackUsername: String) -> SlackResponse {
         if (text.isBlank()) {
-            return { slackUsername -> controller.startLookingForPlayers(slackUsername) }
+            return { slackUsername -> stateManager.startLookingForPlayers(slackUsername) }
         }
 
         if (text == "+1") {
-            return { slackUsername -> controller.addPlayerBySlackUsername(slackUsername) }
+            return { slackUsername -> stateManager.addPlayerBySlackUsername(slackUsername) }
         }
 
         if (text.startsWith("+")) {
             val pushqUsername = text.substring(1)
-            return { slackUsername -> controller.addPlayerByPushqUsername(pushqUsername) }
+            return { slackUsername -> stateManager.addPlayerByPushqUsername(pushqUsername) }
         }
 
         if (text == "-1") {
-            return { slackUsername -> controller.removePlayerBySlackUsername(slackUsername) }
+            return { slackUsername -> stateManager.removePlayerBySlackUsername(slackUsername) }
         }
 
         if (text.startsWith("-")) {
             val pushqUsername = text.substring(1)
-            return { slackUsername -> controller.removePlayerByPushqUsername(pushqUsername) }
+            return { slackUsername -> stateManager.removePlayerByPushqUsername(pushqUsername) }
         }
 
         if (text == "reset") {
-            return { slackUsername -> controller.reset(slackUsername) }
+            return { slackUsername -> stateManager.reset(slackUsername) }
         }
 
         if (text.startsWith("register")) {
             val splitCommand = text.split(" ")
-            return { slackUsername -> controller.registerUser(slackUsername, splitCommand[1]) }
+            return { slackUsername -> stateManager.registerUser(slackUsername, splitCommand[1]) }
         }
         throw UnknownCommandException("Unknown command: $text")
     }

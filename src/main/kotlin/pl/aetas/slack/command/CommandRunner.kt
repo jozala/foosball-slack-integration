@@ -1,7 +1,6 @@
 package pl.aetas.slack.command
 
-import pl.aetas.slack.command.CommandParser
-import pl.aetas.slack.control.SlackResponse
+import pl.aetas.slack.state.SlackResponse
 
 class CommandRunner(private val commandParser: CommandParser) {
 
