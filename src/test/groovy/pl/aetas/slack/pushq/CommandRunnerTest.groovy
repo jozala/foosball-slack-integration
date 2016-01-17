@@ -187,4 +187,20 @@ class CommandRunnerTest extends Specification {
     response.responseType == SlackResponseType.in_channel
     response.text == "-slackUser1 will not play"
   }
+
+  def "should remove all players and set status to CLEAR when command: 'reset' executed"() {
+    given:
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    commandRunner.run('slackUser1', '')
+    commandRunner.run('slackUser2', '+1');
+    commandRunner.run('slackUser3', '+1');
+    when:
+    def response = commandRunner.run('slackUser4', 'reset');
+    then:
+    lookupState.state() == PlayersLookupState.State.CLEAN
+    lookupState.players == []
+    response.responseType == SlackResponseType.in_channel
+    response.text == "Game cancelled by slackUser4"
+  }
 }

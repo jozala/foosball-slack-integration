@@ -25,6 +25,10 @@ class CommandParser(val controller: IntegrationController) {
             return { slackUsername -> controller.removePlayerByPushqUsername(pushqUsername) }
         }
 
+        if (text == "reset") {
+            return { slackUsername -> controller.reset(slackUsername) }
+        }
+
         if (text.startsWith("register")) {
             val splitCommand = text.split(" ")
             return { slackUsername -> controller.registerUser(slackUsername, splitCommand[1]) }

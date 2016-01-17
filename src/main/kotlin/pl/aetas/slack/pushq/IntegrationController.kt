@@ -106,8 +106,8 @@ class IntegrationController(private val userMappingService: UserMappingService,
         return SlackResponse(SlackResponseType.in_channel, "-${player.slackUsername} will not play")
     }
 
-    fun reset(): SlackResponse {
-        TODO()
-
+    fun reset(slackUsername: String): SlackResponse {
+        lookupState.reset()
+        return SlackResponse(SlackResponseType.in_channel, "Game cancelled by $slackUsername")
     }
 }
