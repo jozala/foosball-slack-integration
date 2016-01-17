@@ -57,7 +57,7 @@ class CommandRunnerTest extends Specification {
     lookupState.state == PlayersLookupState.State.LOOKING
     lookupState.players.contains(new Player('slackUser1', 'pushqUser1'))
     response.responseType == SlackResponseType.in_channel
-    response.text == 'slackUser1 is looking for 3 more players'
+    response.text == '+slackUser1 is looking for 3 more players'
   }
 
   def "should return info about non-registered user when user is not registered but tries to start lookup"() {
@@ -77,7 +77,7 @@ class CommandRunnerTest extends Specification {
     def response = commandRunner.run('slackUser2', '');
     then:
     response.responseType == SlackResponseType.ephemeral
-    response.text == 'Someone else is already looking for players use "/foos +1" instead.'
+    response.text == 'Someone else is already looking for players. Use "/foos +1" instead.'
   }
 
   def "should add player to lookup when +1 command executed"() {
@@ -91,7 +91,7 @@ class CommandRunnerTest extends Specification {
     lookupState.players == [new Player('slackUser1', 'pushqUser1'),
                             new Player('slackUser2', 'pushqUser2')]
     response.responseType == SlackResponseType.in_channel
-    response.text == 'slackUser2 joined the game'
+    response.text == '+slackUser2 joined the game'
   }
 
   def "should add specified player to lookup when +[username] command executed"() {
@@ -105,7 +105,7 @@ class CommandRunnerTest extends Specification {
     lookupState.players == [new Player('slackUser1', 'pushqUser1'),
                             new Player('slackUser3', 'pushqUser3')]
     response.responseType == SlackResponseType.in_channel
-    response.text == 'slackUser3 joined the game'
+    response.text == '+slackUser3 joined the game'
   }
 
   def "should return error when trying to add same player twice"() {
@@ -147,5 +147,33 @@ class CommandRunnerTest extends Specification {
     lookupState.state == PlayersLookupState.State.CLEAN
     response.responseType == SlackResponseType.in_channel
     response.text == "Let's play a game! pushqUser1 pushqUser4 : pushqUser2 pushqUser3"
+  }
+
+  def "should remove requesting user from players list when executing command: '-1''"() {
+    given:
+    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    commandRunner.run('slackUser1', '')
+    commandRunner.run('slackUser2', '+1');
+    when:
+    def response = commandRunner.run('slackUser2', '-1');
+    then:
+    lookupState.players == [new Player('slackUser1', 'pushqUser1')]
+    response.responseType == SlackResponseType.in_channel
+    response.text == "-slackUser2 will not play"
+  }
+
+  def "should return ERROR when trying to remove player which has not joined"() {
+    given:
+    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    commandRunner.run('slackUser1', '')
+    when:
+    def response = commandRunner.run('slackUser2', '-1');
+    then:
+    response.responseType == SlackResponseType.ephemeral
+    response.text == "ERROR: slackUser2 has not joined, so cannot be removed from players list."
   }
 }

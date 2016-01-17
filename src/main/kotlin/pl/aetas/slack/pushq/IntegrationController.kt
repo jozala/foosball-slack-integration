@@ -25,9 +25,9 @@ class IntegrationController(private val userMappingService: UserMappingService,
             lookupState.start(player);
         } catch (e: IllegalStateChangeException) {
             return SlackResponse(SlackResponseType.ephemeral,
-                    "Someone else is already looking for players use \"/foos +1\" instead.")
+                    "Someone else is already looking for players. Use \"/foos +1\" instead.")
         }
-        return SlackResponse(SlackResponseType.in_channel, "$slackUsername is looking for 3 more players")
+        return SlackResponse(SlackResponseType.in_channel, "+$slackUsername is looking for 3 more players")
     }
 
     fun addPlayerByPushqUsername(pushqUsername: String): SlackResponse {
@@ -40,7 +40,6 @@ class IntegrationController(private val userMappingService: UserMappingService,
         return addPlayer(player);
     }
 
-    // TODO throw exception when same player tries to add multiple times
     fun addPlayerBySlackUsername(slackUsername: String): SlackResponse {
         val player = userMappingService.getPlayerBySlackUsername(slackUsername)
 
@@ -71,11 +70,27 @@ class IntegrationController(private val userMappingService: UserMappingService,
             return response
         }
 
-        return SlackResponse(SlackResponseType.in_channel, "${player.slackUsername} joined the game")
+        return SlackResponse(SlackResponseType.in_channel, "+${player.slackUsername} joined the game")
     }
 
-    fun removeUser(slackUsername: String): SlackResponse {
-        TODO()
+    fun removePlayer(slackUsername: String): SlackResponse {
+        val player = userMappingService.getPlayerBySlackUsername(slackUsername)
+
+        if (player == null) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "You are not registered yet. Register with \"/foos register [your_username]\".")
+        }
+
+        try {
+            lookupState.removePlayer(player)
+        } catch (e: IllegalStateChangeException) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "ERROR: ${player.slackUsername} cannot be removed now. Either there are no players on the list or reset is performed.")
+        } catch (e: IllegalRemovePlayerException) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "ERROR: ${player.slackUsername} has not joined, so cannot be removed from players list.")
+        }
+        return SlackResponse(SlackResponseType.in_channel, "-$slackUsername will not play")
     }
 
     fun reset(): SlackResponse {

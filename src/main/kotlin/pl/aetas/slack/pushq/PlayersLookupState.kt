@@ -40,7 +40,19 @@ class PlayersLookupState {
         players.clear()
         state = State.CLEAN
     }
+
+    @Synchronized
+    fun removePlayer(player: Player) {
+        if (state != State.LOOKING) {
+            throw IllegalStateChangeException("Current state does does not allow removing player")
+        }
+        if (!players.contains(player)) {
+            throw IllegalRemovePlayerException("Player ${player.slackUsername} has is not on the players list")
+        }
+        players.remove(player);
+    }
 }
 
 class IllegalStateChangeException(message: String): Exception(message)
 class IllegalAddPlayerException(message: String): Exception(message)
+class IllegalRemovePlayerException(message: String): Exception(message)
