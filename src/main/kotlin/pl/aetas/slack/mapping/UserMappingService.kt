@@ -1,4 +1,7 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack.mapping
+
+import pl.aetas.slack.mapping.Player
+import pl.aetas.slack.pushq.PushqSystem
 
 class UserMappingService(private val pushqSystem: PushqSystem) {
 

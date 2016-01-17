@@ -1,9 +1,14 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack.control
 
-class IntegrationController(private val userMappingService: UserMappingService,
-                            private val lookupState: PlayersLookupState,
-                            private val pushqSystem: PushqSystem,
-                            private val teamsCalculator: TeamsCalculator) {
+import pl.aetas.slack.mapping.Player
+import pl.aetas.slack.mapping.UnknownPushqUsername
+import pl.aetas.slack.mapping.UserMappingService
+import pl.aetas.slack.pushq.PushqSystem
+
+class PlayersLookupStateManager(private val userMappingService: UserMappingService,
+                                private val lookupState: PlayersLookupState,
+                                private val pushqSystem: PushqSystem,
+                                private val teamsCalculator: TeamsCalculator) {
 
     fun registerUser(slackUsername: String, pushqUsername: String): SlackResponse {
         try {

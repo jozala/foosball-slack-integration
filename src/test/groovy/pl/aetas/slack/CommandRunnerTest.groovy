@@ -1,5 +1,14 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack
 
+import pl.aetas.slack.command.CommandParser
+import pl.aetas.slack.command.CommandRunner
+import pl.aetas.slack.control.PlayersLookupState
+import pl.aetas.slack.control.PlayersLookupStateManager
+import pl.aetas.slack.control.SlackResponseType
+import pl.aetas.slack.control.TeamsCalculator
+import pl.aetas.slack.pushq.PushqSystem
+import pl.aetas.slack.mapping.Player
+import pl.aetas.slack.mapping.UserMappingService
 import spock.lang.Specification
 
 class CommandRunnerTest extends Specification {
@@ -14,8 +23,8 @@ class CommandRunnerTest extends Specification {
     userMappingService = new UserMappingService(pushqSystem)
     lookupState = new PlayersLookupState()
     def teamsCalculator = new TeamsCalculator()
-    def integrationController = new IntegrationController(userMappingService, lookupState, pushqSystem, teamsCalculator)
-    def commandParser = new CommandParser(integrationController)
+    def playersLookupStateManager = new PlayersLookupStateManager(userMappingService, lookupState, pushqSystem, teamsCalculator)
+    def commandParser = new CommandParser(playersLookupStateManager)
     commandRunner = new CommandRunner(commandParser)
     pushqSystem.users() >> ['existingUser', 'pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
   }

@@ -1,6 +1,9 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack.command
 
-class CommandParser(val controller: IntegrationController) {
+import pl.aetas.slack.control.PlayersLookupStateManager
+import pl.aetas.slack.control.SlackResponse
+
+class CommandParser(val controller: PlayersLookupStateManager) {
 
     fun parseCommand(text: String): (slackUsername: String) -> SlackResponse {
         if (text.isBlank()) {

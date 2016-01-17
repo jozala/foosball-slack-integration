@@ -1,4 +1,6 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack.control
+
+import pl.aetas.slack.mapping.Player
 
 class TeamsCalculator {
 
