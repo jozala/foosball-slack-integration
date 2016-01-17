@@ -1,13 +1,13 @@
-package pl.aetas.slack
+package pl.aetas.slack.foos
 
 import kotlin.Function
-import pl.aetas.slack.command.CommandParser
-import pl.aetas.slack.command.UnknownCommandException
-import pl.aetas.slack.state.PlayersLookupState
-import pl.aetas.slack.state.PlayersLookupStateManager
-import pl.aetas.slack.state.TeamsCalculator
-import pl.aetas.slack.mapping.UserMappingService
-import pl.aetas.slack.pushq.PushqSystem
+import pl.aetas.slack.foos.command.CommandParser
+import pl.aetas.slack.foos.command.UnknownCommandException
+import pl.aetas.slack.foos.state.PlayersLookupState
+import pl.aetas.slack.foos.state.PlayersLookupStateManager
+import pl.aetas.slack.foos.state.TeamsCalculator
+import pl.aetas.slack.foos.mapping.UserMappingService
+import pl.aetas.slack.foos.pushq.PushqSystem
 import spock.lang.Specification
 
 class CommandParserTest extends Specification {

@@ -1,14 +1,14 @@
-package pl.aetas.slack
+package pl.aetas.slack.foos
 
-import pl.aetas.slack.command.CommandParser
-import pl.aetas.slack.command.CommandRunner
-import pl.aetas.slack.state.PlayersLookupState
-import pl.aetas.slack.state.PlayersLookupStateManager
-import pl.aetas.slack.state.SlackResponseType
-import pl.aetas.slack.state.TeamsCalculator
-import pl.aetas.slack.pushq.PushqSystem
-import pl.aetas.slack.mapping.Player
-import pl.aetas.slack.mapping.UserMappingService
+import pl.aetas.slack.foos.command.CommandParser
+import pl.aetas.slack.foos.command.CommandRunner
+import pl.aetas.slack.foos.state.PlayersLookupState
+import pl.aetas.slack.foos.state.PlayersLookupStateManager
+import pl.aetas.slack.foos.state.SlackResponseType
+import pl.aetas.slack.foos.state.TeamsCalculator
+import pl.aetas.slack.foos.pushq.PushqSystem
+import pl.aetas.slack.foos.mapping.Player
+import pl.aetas.slack.foos.mapping.UserMappingService
 import spock.lang.Specification
 
 class CommandRunnerTest extends Specification {

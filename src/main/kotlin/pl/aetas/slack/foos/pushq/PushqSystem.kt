@@ -1,4 +1,4 @@
-package pl.aetas.slack.pushq
+package pl.aetas.slack.foos.pushq
 
 open class PushqSystem {
 

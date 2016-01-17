@@ -1,4 +1,4 @@
-package pl.aetas.slack.state
+package pl.aetas.slack.foos.state
 
 import spock.lang.Specification
 

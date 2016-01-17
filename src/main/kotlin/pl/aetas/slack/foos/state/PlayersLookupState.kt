@@ -1,6 +1,6 @@
-package pl.aetas.slack.state
+package pl.aetas.slack.foos.state
 
-import pl.aetas.slack.mapping.Player
+import pl.aetas.slack.foos.mapping.Player
 
 class PlayersLookupState {
 

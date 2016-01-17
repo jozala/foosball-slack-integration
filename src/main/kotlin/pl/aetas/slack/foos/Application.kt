@@ -1,12 +1,12 @@
-package pl.aetas.slack
+package pl.aetas.slack.foos
 
 import org.wasabi.app.AppServer
-import pl.aetas.slack.command.CommandParser
-import pl.aetas.slack.command.CommandRunner
-import pl.aetas.slack.mapping.UserMappingService
-import pl.aetas.slack.pushq.PushqSystem
-import pl.aetas.slack.state.PlayersLookupStateManagerFactory
-import pl.aetas.slack.state.TeamsCalculator
+import pl.aetas.slack.foos.command.CommandParser
+import pl.aetas.slack.foos.command.CommandRunner
+import pl.aetas.slack.foos.mapping.UserMappingService
+import pl.aetas.slack.foos.pushq.PushqSystem
+import pl.aetas.slack.foos.state.PlayersLookupStateManagerFactory
+import pl.aetas.slack.foos.state.TeamsCalculator
 
 fun main(args : Array<String>) {
 

@@ -1,7 +1,7 @@
-package pl.aetas.slack.state
+package pl.aetas.slack.foos.state
 
-import pl.aetas.slack.mapping.UserMappingService
-import pl.aetas.slack.pushq.PushqSystem
+import pl.aetas.slack.foos.mapping.UserMappingService
+import pl.aetas.slack.foos.pushq.PushqSystem
 
 class PlayersLookupStateManagerFactory {
 

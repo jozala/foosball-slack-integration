@@ -1,9 +1,9 @@
-package pl.aetas.slack.state
+package pl.aetas.slack.foos.state
 
-import pl.aetas.slack.mapping.Player
-import pl.aetas.slack.mapping.UnknownPushqUsername
-import pl.aetas.slack.mapping.UserMappingService
-import pl.aetas.slack.pushq.PushqSystem
+import pl.aetas.slack.foos.mapping.Player
+import pl.aetas.slack.foos.mapping.UnknownPushqUsername
+import pl.aetas.slack.foos.mapping.UserMappingService
+import pl.aetas.slack.foos.pushq.PushqSystem
 
 class PlayersLookupStateManager(private val userMappingService: UserMappingService,
                                 private val lookupState: PlayersLookupState,

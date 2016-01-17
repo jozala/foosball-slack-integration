@@ -1,7 +1,7 @@
-package pl.aetas.slack.command
+package pl.aetas.slack.foos.command
 
-import pl.aetas.slack.state.PlayersLookupStateManager
-import pl.aetas.slack.state.SlackResponse
+import pl.aetas.slack.foos.state.PlayersLookupStateManager
+import pl.aetas.slack.foos.state.SlackResponse
 
 class CommandParser(val stateManager: PlayersLookupStateManager) {
 
