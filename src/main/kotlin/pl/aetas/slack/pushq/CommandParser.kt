@@ -17,7 +17,12 @@ class CommandParser(val controller: IntegrationController) {
         }
 
         if (text == "-1") {
-            return { slackUsername -> controller.removePlayer(slackUsername) }
+            return { slackUsername -> controller.removePlayerBySlackUsername(slackUsername) }
+        }
+
+        if (text.startsWith("-")) {
+            val pushqUsername = text.substring(1)
+            return { slackUsername -> controller.removePlayerByPushqUsername(pushqUsername) }
         }
 
         if (text.startsWith("register")) {

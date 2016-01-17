@@ -62,7 +62,7 @@ class IntegrationController(private val userMappingService: UserMappingService,
                     "ERROR: ${player.slackUsername} is already added.")
         }
 
-        if (lookupState.state == PlayersLookupState.State.FINISHED) {
+        if (lookupState.state() == PlayersLookupState.State.FINISHED) {
             val teams = teamsCalculator.calculateTeams(pushqSystem.ranking(), lookupState.players)
             val response = SlackResponse(SlackResponseType.in_channel,
                     "Let's play a game! ${teams.first} : ${teams.second}")
@@ -73,7 +73,7 @@ class IntegrationController(private val userMappingService: UserMappingService,
         return SlackResponse(SlackResponseType.in_channel, "+${player.slackUsername} joined the game")
     }
 
-    fun removePlayer(slackUsername: String): SlackResponse {
+    fun removePlayerBySlackUsername(slackUsername: String): SlackResponse {
         val player = userMappingService.getPlayerBySlackUsername(slackUsername)
 
         if (player == null) {
@@ -81,6 +81,19 @@ class IntegrationController(private val userMappingService: UserMappingService,
                     "You are not registered yet. Register with \"/foos register [your_username]\".")
         }
 
+        return removePlayer(player)
+    }
+
+    fun removePlayerByPushqUsername(pushqUsername: String): SlackResponse {
+        val player = userMappingService.getPlayerByPushqUsername(pushqUsername)
+        if (player == null) {
+            return SlackResponse(SlackResponseType.ephemeral,
+                    "User $pushqUsername is not registered. Ask user to register with \"/foos register [username]\".")
+        }
+        return removePlayer(player)
+    }
+
+    private fun removePlayer(player: Player): SlackResponse {
         try {
             lookupState.removePlayer(player)
         } catch (e: IllegalStateChangeException) {
@@ -90,7 +103,7 @@ class IntegrationController(private val userMappingService: UserMappingService,
             return SlackResponse(SlackResponseType.ephemeral,
                     "ERROR: ${player.slackUsername} has not joined, so cannot be removed from players list.")
         }
-        return SlackResponse(SlackResponseType.in_channel, "-$slackUsername will not play")
+        return SlackResponse(SlackResponseType.in_channel, "-${player.slackUsername} will not play")
     }
 
     fun reset(): SlackResponse {

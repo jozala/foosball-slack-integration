@@ -54,7 +54,7 @@ class CommandRunnerTest extends Specification {
     when:
     def response = commandRunner.run('slackUser1', '');
     then:
-    lookupState.state == PlayersLookupState.State.LOOKING
+    lookupState.state() == PlayersLookupState.State.LOOKING
     lookupState.players.contains(new Player('slackUser1', 'pushqUser1'))
     response.responseType == SlackResponseType.in_channel
     response.text == '+slackUser1 is looking for 3 more players'
@@ -144,14 +144,13 @@ class CommandRunnerTest extends Specification {
     def response = commandRunner.run('slackUser4', '+1');
     then:
     lookupState.players.isEmpty()
-    lookupState.state == PlayersLookupState.State.CLEAN
+    lookupState.state() == PlayersLookupState.State.CLEAN
     response.responseType == SlackResponseType.in_channel
     response.text == "Let's play a game! pushqUser1 pushqUser4 : pushqUser2 pushqUser3"
   }
 
   def "should remove requesting user from players list when executing command: '-1''"() {
     given:
-    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
     userMappingService.addUserMapping("slackUser1", "pushqUser1")
     userMappingService.addUserMapping("slackUser2", "pushqUser2")
     commandRunner.run('slackUser1', '')
@@ -166,7 +165,6 @@ class CommandRunnerTest extends Specification {
 
   def "should return ERROR when trying to remove player which has not joined"() {
     given:
-    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
     userMappingService.addUserMapping("slackUser1", "pushqUser1")
     userMappingService.addUserMapping("slackUser2", "pushqUser2")
     commandRunner.run('slackUser1', '')
@@ -175,5 +173,18 @@ class CommandRunnerTest extends Specification {
     then:
     response.responseType == SlackResponseType.ephemeral
     response.text == "ERROR: slackUser2 has not joined, so cannot be removed from players list."
+  }
+
+  def "should remove specified player when command: '-[username]' executed"() {
+    given:
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    commandRunner.run('slackUser1', '')
+    when:
+    def response = commandRunner.run('slackUser2', '-pushqUser1');
+    then:
+    lookupState.players == []
+    response.responseType == SlackResponseType.in_channel
+    response.text == "-slackUser1 will not play"
   }
 }
