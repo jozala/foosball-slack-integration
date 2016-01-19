@@ -1,13 +1,13 @@
 package pl.aetas.slack.foos
-
 import kotlin.Function
 import pl.aetas.slack.foos.command.CommandParser
-import pl.aetas.slack.foos.command.UnknownCommandException
-import pl.aetas.slack.foos.state.PlayersLookupState
-import pl.aetas.slack.foos.state.PlayersLookupStateManager
-import pl.aetas.slack.foos.state.TeamsCalculator
 import pl.aetas.slack.foos.mapping.UserMappingService
 import pl.aetas.slack.foos.pushq.PushqSystem
+import pl.aetas.slack.foos.state.PlayersLookupState
+import pl.aetas.slack.foos.state.PlayersLookupStateManager
+import pl.aetas.slack.foos.state.SlackResponse
+import pl.aetas.slack.foos.state.SlackResponseType
+import pl.aetas.slack.foos.state.TeamsCalculator
 import spock.lang.Specification
 
 class CommandParserTest extends Specification {
@@ -26,12 +26,11 @@ class CommandParserTest extends Specification {
     );
   }
 
-  def "should failed with exception when unknown command is given"() {
+  def "should return SlackResponse with unknown command information"() {
     when:
-    commandParser.parseCommand('unknown sth')
+    def command = commandParser.parseCommand('unknown sth')
     then:
-    def exception = thrown(UnknownCommandException)
-    exception.message == 'Unknown command: unknown sth'
+    command.invoke("slackUsername") == new SlackResponse(SlackResponseType.ephemeral, "Unknown command: unknown sth", [])
   }
 
   def "should parse known command to runnable function"() {

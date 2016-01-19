@@ -2,6 +2,7 @@ package pl.aetas.slack.foos.command
 
 import pl.aetas.slack.foos.state.PlayersLookupStateManager
 import pl.aetas.slack.foos.state.SlackResponse
+import pl.aetas.slack.foos.state.SlackResponseType
 
 class CommandParser(val stateManager: PlayersLookupStateManager) {
 
@@ -36,8 +37,7 @@ class CommandParser(val stateManager: PlayersLookupStateManager) {
             val splitCommand = text.split(" ")
             return { slackUsername -> stateManager.registerUser(slackUsername, splitCommand[1]) }
         }
-        throw UnknownCommandException("Unknown command: $text")
+
+        return { slackUsername -> SlackResponse(SlackResponseType.ephemeral, "Unknown command: $text")}
     }
 }
-
-class UnknownCommandException(message: String): Exception(message)
