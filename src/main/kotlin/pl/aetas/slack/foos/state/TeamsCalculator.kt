@@ -6,16 +6,35 @@ class TeamsCalculator {
 
     fun calculateTeams(ranking: List<String>, players: List<Player>): Pair<Team, Team> {
 
-        players.sortedBy { player ->
-            ranking.indexOfRaw(ranking.find { rankingUser -> rankingUser == player.pushqUsername})
+        val sortedPlayers = players.sortedBy { player ->
+            ranking.indexOfRaw(ranking.find { rankingUser -> rankingUser == player.pushqUsername })
         }
 
-        return Pair(Team(players[0], players[3]), Team(players[1], players[2]))
+        return Pair(Team(sortedPlayers[0], sortedPlayers[3]), Team(sortedPlayers[1], sortedPlayers[2]))
     }
 }
 
-data class Team(val player1: Player, val player2: Player) {
-    override fun toString(): String {
-        return "${player1.pushqUsername} ${player2.pushqUsername}"
+
+class Team(player1: Player, player2: Player) {
+
+    val players: Set<Player> = setOf(player1, player2);
+
+    override fun toString(): String = players.map { it.pushqUsername }.joinToString(" ")
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Team
+
+        if (players != other.players) return false
+
+        return true
     }
+
+    override fun hashCode(): Int{
+        return players.hashCode()
+    }
+
+
 }
