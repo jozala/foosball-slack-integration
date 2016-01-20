@@ -29,6 +29,11 @@ class CommandRunnerTest extends Specification {
     pushqSystem.users() >> ['existingUser', 'pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
   }
 
+  void cleanup() {
+    def mappingFile = new File("players_mapping.json")
+    mappingFile.text = "{}"
+  }
+
   def "should register user when command: register someUser"() {
     when:
     commandRunner.run('slackUser', 'register existingUser');
@@ -66,7 +71,7 @@ class CommandRunnerTest extends Specification {
     lookupState.state() == PlayersLookupState.State.LOOKING
     lookupState.players.contains(new Player('slackUser1', 'pushqUser1'))
     response.responseType == SlackResponseType.in_channel
-    response.text == '+slackUser1 is looking for 3 more players'
+    response.text == '+slackUser1 is looking for 3 more players\n<!group> Join with "/foos +1"'
   }
 
   def "should return info about non-registered user when user is not registered but tries to start lookup"() {
@@ -100,7 +105,7 @@ class CommandRunnerTest extends Specification {
     lookupState.players == [new Player('slackUser1', 'pushqUser1'),
                             new Player('slackUser2', 'pushqUser2')]
     response.responseType == SlackResponseType.in_channel
-    response.text == '+slackUser2 joined the game'
+    response.text == '+slackUser2 joined the game (pushqUser1, pushqUser2).\n2 more needed!'
   }
 
   def "should add specified player to lookup when +[username] command executed"() {
@@ -114,7 +119,7 @@ class CommandRunnerTest extends Specification {
     lookupState.players == [new Player('slackUser1', 'pushqUser1'),
                             new Player('slackUser3', 'pushqUser3')]
     response.responseType == SlackResponseType.in_channel
-    response.text == '+slackUser3 joined the game'
+    response.text == '+slackUser3 joined the game (pushqUser1, pushqUser3).\n2 more needed!'
   }
 
   def "should return error when trying to add same player twice"() {
@@ -169,7 +174,7 @@ class CommandRunnerTest extends Specification {
     then:
     lookupState.players == [new Player('slackUser1', 'pushqUser1')]
     response.responseType == SlackResponseType.in_channel
-    response.text == "-slackUser2 will not play"
+    response.text == "-slackUser2 will not play (pushqUser1).\n3 more needed!"
   }
 
   def "should return ERROR when trying to remove player which has not joined"() {
@@ -194,7 +199,7 @@ class CommandRunnerTest extends Specification {
     then:
     lookupState.players == []
     response.responseType == SlackResponseType.in_channel
-    response.text == "-slackUser1 will not play"
+    response.text == "-slackUser1 will not play ().\n4 more needed!"
   }
 
   def "should remove all players and set status to CLEAR when command: 'reset' executed"() {

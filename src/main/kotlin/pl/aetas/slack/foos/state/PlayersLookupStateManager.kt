@@ -32,7 +32,8 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             return SlackResponse(SlackResponseType.ephemeral,
                     "Someone else is already looking for players. Use \"/foos +1\" instead.")
         }
-        return SlackResponse(SlackResponseType.in_channel, "+$slackUsername is looking for 3 more players. \nJoin with \"/foos +1\"")
+        return SlackResponse(SlackResponseType.in_channel,
+                "+$slackUsername is looking for 3 more players\n<!group> Join with \"/foos +1\"")
     }
 
     fun addPlayerByPushqUsername(pushqUsername: String): SlackResponse {
@@ -75,8 +76,12 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             return response
         }
 
-        return SlackResponse(SlackResponseType.in_channel, "+${player.slackUsername} joined the game")
+        return SlackResponse(SlackResponseType.in_channel,
+                "+${player.slackUsername} joined the game (${listPlayers(lookupState.players)}).\n" +
+                        "${lookupState.playersMissing()} more needed!")
     }
+
+    private fun listPlayers(players: Collection<Player>) = players.map { it.pushqUsername }.joinToString(", ")
 
     fun removePlayerBySlackUsername(slackUsername: String): SlackResponse {
         val player = userMappingService.getPlayerBySlackUsername(slackUsername)
@@ -108,7 +113,9 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             return SlackResponse(SlackResponseType.ephemeral,
                     "ERROR: ${player.slackUsername} has not joined, so cannot be removed from players list.")
         }
-        return SlackResponse(SlackResponseType.in_channel, "-${player.slackUsername} will not play")
+        return SlackResponse(SlackResponseType.in_channel,
+                "-${player.slackUsername} will not play (${listPlayers(lookupState.players)}).\n" +
+                        "${lookupState.playersMissing()} more needed!")
     }
 
     fun reset(slackUsername: String): SlackResponse {

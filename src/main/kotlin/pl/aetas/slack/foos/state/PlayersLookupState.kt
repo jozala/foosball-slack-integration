@@ -50,6 +50,8 @@ class PlayersLookupState {
         }
         players.remove(player);
     }
+
+    fun playersMissing() = 4 - players.size;
 }
 
 class IllegalStateChangeException(message: String): Exception(message)
