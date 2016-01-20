@@ -32,7 +32,7 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             return SlackResponse(SlackResponseType.ephemeral,
                     "Someone else is already looking for players. Use \"/foos +1\" instead.")
         }
-        return SlackResponse(SlackResponseType.in_channel, "+$slackUsername is looking for 3 more players")
+        return SlackResponse(SlackResponseType.in_channel, "+$slackUsername is looking for 3 more players. \nJoin with \"/foos +1\"")
     }
 
     fun addPlayerByPushqUsername(pushqUsername: String): SlackResponse {
