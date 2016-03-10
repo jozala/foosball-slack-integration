@@ -7,6 +7,7 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.FileReader
 import java.io.FileWriter
+import java.util.*
 
 class UserMappingService(private val pushqSystem: PushqSystem) {
 
@@ -20,7 +21,7 @@ class UserMappingService(private val pushqSystem: PushqSystem) {
         val fileReader = BufferedReader(FileReader("players_mapping.json"))
 
         userMapBySlackUsername = gson.fromJson(fileReader, type)
-        userMapByPushqUsername = userMapBySlackUsername.map { Pair(it.value, it.key) }.toMap().toLinkedMap()
+        userMapByPushqUsername = userMapBySlackUsername.map { Pair(it.value, it.key) }.toMap().let { LinkedHashMap(it) }
         fileReader.close()
     }
 

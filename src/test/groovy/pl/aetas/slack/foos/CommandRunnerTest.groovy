@@ -160,7 +160,7 @@ class CommandRunnerTest extends Specification {
     lookupState.players.isEmpty()
     lookupState.state() == PlayersLookupState.State.CLEAN
     response.responseType == SlackResponseType.in_channel
-    response.text == "Let's play a game! pushqUser1 pushqUser4 : pushqUser2 pushqUser3"
+    response.text.contains("Let's play a game! pushqUser1 pushqUser4 : pushqUser2 pushqUser3")
   }
 
   def "should remove requesting user from players list when executing command: '-1''"() {
@@ -216,5 +216,21 @@ class CommandRunnerTest extends Specification {
     lookupState.players == []
     response.responseType == SlackResponseType.in_channel
     response.text == "Game cancelled by slackUser4"
+  }
+
+  def "should respond with a link to put resutlt when game is started"() {
+    given:
+    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    userMappingService.addUserMapping("slackUser3", "pushqUser3")
+    userMappingService.addUserMapping("slackUser4", "pushqUser4")
+    commandRunner.run('slackUser1', '')
+    when:
+    commandRunner.run('slackUser2', '+1');
+    commandRunner.run('slackUser3', '+1');
+    def response = commandRunner.run('slackUser4', '+1');
+    then:
+    response.text.contains("Insert result <http://pushq.noip.me:8088/register?redPlayer1=pushqUser1&redPlayer2=pushqUser4&bluePlayer1=pushqUser2&bluePlayer2=pushqUser3|here>")
   }
 }

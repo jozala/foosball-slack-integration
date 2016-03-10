@@ -7,7 +7,7 @@ class TeamsCalculator {
     fun calculateTeams(ranking: List<String>, players: List<Player>): Pair<Team, Team> {
 
         val sortedPlayers = players.sortedBy { player ->
-            ranking.indexOfRaw(ranking.find { rankingUser -> rankingUser == player.pushqUsername })
+            ranking.indexOf(ranking.find { rankingUser -> rankingUser == player.pushqUsername })
         }
 
         return Pair(Team(sortedPlayers[0], sortedPlayers[3]), Team(sortedPlayers[1], sortedPlayers[2]))

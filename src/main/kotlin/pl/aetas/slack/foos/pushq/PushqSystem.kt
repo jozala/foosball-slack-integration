@@ -9,10 +9,10 @@ open class PushqSystem {
 
     val gson: Gson = Gson()
 
-    val PUSHQ_URL = ApplicationProperties.get("pushq.url")
+    val PUSHQ_URL_API_LEMSTAT = ApplicationProperties.get("pushq.url.api.lemstat")
 
     open fun users(): List<String> {
-        val response = URL(PUSHQ_URL).readText()
+        val response = URL(PUSHQ_URL_API_LEMSTAT).readText()
         val stats: ArrayList<Map<String, String>> = gson.fromJson(response, typeLiteral<ArrayList<Map<String, String>>>())
         return stats.map { it.get("name")!! }
     }

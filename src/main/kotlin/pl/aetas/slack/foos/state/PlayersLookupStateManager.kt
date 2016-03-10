@@ -1,5 +1,6 @@
 package pl.aetas.slack.foos.state
 
+import pl.aetas.slack.foos.ApplicationProperties
 import pl.aetas.slack.foos.mapping.Player
 import pl.aetas.slack.foos.mapping.UnknownPushqUsername
 import pl.aetas.slack.foos.mapping.UserMappingService
@@ -9,6 +10,9 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
                                 private val lookupState: PlayersLookupState,
                                 private val pushqSystem: PushqSystem,
                                 private val teamsCalculator: TeamsCalculator) {
+
+    val PUSHQ_URL_WEB_REGISTER = ApplicationProperties.get("pushq.url.web.register")
+
 
     fun registerUser(slackUsername: String, pushqUsername: String): SlackResponse {
         try {
@@ -70,8 +74,14 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
 
         if (lookupState.state() == PlayersLookupState.State.FINISHED) {
             val teams = teamsCalculator.calculateTeams(pushqSystem.ranking(), lookupState.players)
+            val redPlayers = teams.first.players.map { it.pushqUsername }
+            val bluePlayers = teams.second.players.map { it.pushqUsername }
+            val playersAsQueryParams = "redPlayer1=${redPlayers.get(0)}&redPlayer2=${redPlayers.get(1)}" +
+                    "&bluePlayer1=${bluePlayers.get(0)}&bluePlayer2=${bluePlayers.get(1)}"
             val response = SlackResponse(SlackResponseType.in_channel,
-                    "Let's play a game! ${teams.first} : ${teams.second}")
+                    "Let's play a game! ${teams.first} : ${teams.second}\n" +
+                            "Have you won? Insert result " +
+                            "<${PUSHQ_URL_WEB_REGISTER}?${playersAsQueryParams}|here>.")
             lookupState.reset();
             return response
         }
