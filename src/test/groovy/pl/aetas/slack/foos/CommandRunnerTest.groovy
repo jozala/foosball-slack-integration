@@ -231,6 +231,6 @@ class CommandRunnerTest extends Specification {
     commandRunner.run('slackUser3', '+1');
     def response = commandRunner.run('slackUser4', '+1');
     then:
-    response.text.contains("Insert result <http://pushq.noip.me:8088/register?redPlayer1=pushqUser1&redPlayer2=pushqUser4&bluePlayer1=pushqUser2&bluePlayer2=pushqUser3|here>")
+    response.text.contains("Insert result <http://pushq.noip.me:8088/register?playerRed1=pushqUser1&playerRed2=pushqUser4&playerBlue1=pushqUser2&playerBlue2=pushqUser3|here>")
   }
 }
