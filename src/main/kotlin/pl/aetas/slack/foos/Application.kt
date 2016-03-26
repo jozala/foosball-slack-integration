@@ -32,7 +32,7 @@ fun main(args : Array<String>) {
 object ApplicationProperties {
 
     val properties: Properties = Properties()
-    val inputStream: FileInputStream = FileInputStream("foos.properties")
+    val inputStream: FileInputStream = FileInputStream("config/foos.properties")
 
     init {
         properties.load(inputStream)

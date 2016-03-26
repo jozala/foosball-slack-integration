@@ -30,7 +30,7 @@ class CommandRunnerTest extends Specification {
   }
 
   void cleanup() {
-    def mappingFile = new File("players_mapping.json")
+    def mappingFile = new File("config/players_mapping.json")
     mappingFile.text = "{}"
   }
 

@@ -18,7 +18,7 @@ class UserMappingService(private val pushqSystem: PushqSystem) {
     val type = object : TypeToken<Map<String, String>>() {}.type
 
     init {
-        val fileReader = BufferedReader(FileReader("players_mapping.json"))
+        val fileReader = BufferedReader(FileReader("config/players_mapping.json"))
 
         userMapBySlackUsername = gson.fromJson(fileReader, type)
         userMapByPushqUsername = userMapBySlackUsername.map { Pair(it.value, it.key) }.toMap().let { LinkedHashMap(it) }
@@ -37,7 +37,7 @@ class UserMappingService(private val pushqSystem: PushqSystem) {
     }
 
     private fun storeUserMap(userMapBySlackUsernameToStore: Map<String, String>) {
-        val mappingFile = BufferedWriter(FileWriter("players_mapping.json"))
+        val mappingFile = BufferedWriter(FileWriter("config/players_mapping.json"))
         gson.toJson(userMapBySlackUsernameToStore, type, mappingFile)
         mappingFile.close()
     }
