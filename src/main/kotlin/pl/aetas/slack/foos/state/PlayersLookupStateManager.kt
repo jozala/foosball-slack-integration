@@ -78,7 +78,7 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             val bluePlayers = teams.second.players.map { it.pushqUsername }
             val playersAsQueryParams = "playerRed1=${redPlayers.get(0)}&playerRed2=${redPlayers.get(1)}" +
                     "&playerBlue1=${bluePlayers.get(0)}&playerBlue2=${bluePlayers.get(1)}"
-            val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "@$it " } + teams.second.players.map { it.slackUsername }.joinToString { "@$it " }
+            val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "<@$it> " } + teams.second.players.map { it.slackUsername }.joinToString { "<@$it> " }
             val response = SlackResponse(SlackResponseType.in_channel,
                     "Let's play a game! ${teams.first} : ${teams.second}\n" +
                             "${teams.first.players.toList().first().slackUsername} : ${teams.second}\n" +
