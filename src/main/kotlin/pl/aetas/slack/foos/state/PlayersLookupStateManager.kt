@@ -81,7 +81,6 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
             val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "<@$it> " } + teams.second.players.map { it.slackUsername }.joinToString { "<@$it> " }
             val response = SlackResponse(SlackResponseType.in_channel,
                     "Let's play a game! ${teams.first} : ${teams.second}\n" +
-                            "${teams.first.players.toList().first().slackUsername} : ${teams.second}\n" +
                             "$slackPlayers: go go go!\n" +
                             "Have you won? Insert result " +
                             "<${PUSHQ_URL_WEB_REGISTER}?${playersAsQueryParams}|here>.")
