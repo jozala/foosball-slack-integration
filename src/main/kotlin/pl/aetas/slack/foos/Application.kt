@@ -15,6 +15,9 @@ import java.util.*
 
 fun main(args : Array<String>) {
 
+    System.setProperty("sun.net.client.defaultReadTimeout", "2000");
+    System.setProperty("sun.net.client.defaultConnectTimeout", "2000");
+
     val gson: Gson = GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()

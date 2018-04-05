@@ -5,6 +5,7 @@ import pl.aetas.slack.foos.mapping.Player
 import pl.aetas.slack.foos.mapping.UnknownPushqUsername
 import pl.aetas.slack.foos.mapping.UserMappingService
 import pl.aetas.slack.foos.pushq.PushqSystem
+import java.net.ConnectException
 
 class PlayersLookupStateManager(private val userMappingService: UserMappingService,
                                 private val lookupState: PlayersLookupState,
@@ -73,18 +74,29 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
         }
 
         if (lookupState.state() == PlayersLookupState.State.FINISHED) {
-            val teams = teamsCalculator.calculateTeams(pushqSystem.ranking(), lookupState.players)
-            val redPlayers = teams.first.players.map { it.pushqUsername }
-            val bluePlayers = teams.second.players.map { it.pushqUsername }
-            val playersAsQueryParams = "playerRed1=${redPlayers.get(0)}&playerRed2=${redPlayers.get(1)}" +
-                    "&playerBlue1=${bluePlayers.get(0)}&playerBlue2=${bluePlayers.get(1)}"
-            val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "<@$it> " } + teams.second.players.map { it.slackUsername }.joinToString { "<@$it> " }
-            val response = SlackResponse(SlackResponseType.in_channel,
-                    "Let's play a game! ${teams.first} : ${teams.second}\n" +
-                            "$slackPlayers: go go go!\n" +
-                            "Have you won? Insert result " +
-                            "<${PUSHQ_URL_WEB_REGISTER}?${playersAsQueryParams}|here>.")
-            lookupState.reset();
+            var response: SlackResponse;
+            try {
+                val teams = teamsCalculator.calculateTeams(pushqSystem.ranking(), lookupState.players)
+                val redPlayers = teams.first.players.map { it.pushqUsername }
+                val bluePlayers = teams.second.players.map { it.pushqUsername }
+                val playersAsQueryParams = "playerRed1=${redPlayers.get(0)}&playerRed2=${redPlayers.get(1)}" +
+                        "&playerBlue1=${bluePlayers.get(0)}&playerBlue2=${bluePlayers.get(1)}"
+                val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "<@$it> " } + teams.second.players.map { it.slackUsername }.joinToString { "<@$it> " }
+                response = SlackResponse(SlackResponseType.in_channel,
+                        "Let's play a game! ${teams.first} : ${teams.second}\n" +
+                                "$slackPlayers: go go go!\n" +
+                                "Have you won? Insert result " +
+                                "<${PUSHQ_URL_WEB_REGISTER}?${playersAsQueryParams}|here>.")
+                lookupState.reset();
+            } catch (e: Exception) {
+                val slackPlayers: String = lookupState.players.map { it.slackUsername }.joinToString { "<@$it> " }
+                response = SlackResponse(SlackResponseType.in_channel,
+                        ":electric_plug: Just play... randomly: $slackPlayers\n" +
+                                "Pushq's server is gone :coffin:\n" +
+                                "Have you won? Write result on whiteboard!")
+                lookupState.reset();
+            }
+
             return response
         }
 
