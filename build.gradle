@@ -1,6 +1,3 @@
-group 'pl.aetas.slack'
-version '1.3.2'
-
 buildscript {
 
   ext.kotlin_version = '1.3.20'
@@ -14,6 +11,13 @@ buildscript {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
+
+plugins {
+  id 'com.google.cloud.tools.jib' version '1.8.0'
+}
+
+group 'pl.aetas.slack'
+version '1.4.0'
 
 apply plugin: 'kotlin'
 apply plugin: "groovy"
@@ -47,4 +51,15 @@ task fatJar(type: Jar) {
   with jar
 }
 
-apply from: 'gradle/docker.gradle'
+jib {
+  from {
+    image = 'adoptopenjdk:11.0.5_10-jre-hotspot-bionic'
+  }
+  to {
+    image = "maniekq/${project.name}:${project.version}"
+    auth {
+      username = 'maniekq'
+      password = project.dockerHubPasswor
+    }
+  }
+}
