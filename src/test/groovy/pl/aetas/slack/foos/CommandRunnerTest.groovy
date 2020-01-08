@@ -152,15 +152,41 @@ class CommandRunnerTest extends Specification {
     userMappingService.addUserMapping("slackUser3", "pushqUser3")
     userMappingService.addUserMapping("slackUser4", "pushqUser4")
     commandRunner.run('slackUser1', '')
+
     when:
     commandRunner.run('slackUser2', '+1');
     commandRunner.run('slackUser3', '+1');
     def response = commandRunner.run('slackUser4', '+1');
+
     then:
     lookupState.players.isEmpty()
     lookupState.state() == PlayersLookupState.State.CLEAN
     response.responseType == SlackResponseType.in_channel
-    response.text.contains("Let's play a game! pushqUser1 pushqUser4 : pushqUser2 pushqUser3")
+
+    and:
+    response.text.contains("Let's play a game!")
+    response.text.contains("pushqUser1 pushqUser4")
+    response.text.contains("pushqUser2 pushqUser3")
+  }
+
+  def "should display a ball next to team, which should start a game with a ball"() {
+    given:
+    pushqSystem.ranking() >> ['pushqUser1', 'pushqUser2', 'pushqUser3', 'pushqUser4']
+    userMappingService.addUserMapping("slackUser1", "pushqUser1")
+    userMappingService.addUserMapping("slackUser2", "pushqUser2")
+    userMappingService.addUserMapping("slackUser3", "pushqUser3")
+    userMappingService.addUserMapping("slackUser4", "pushqUser4")
+    commandRunner.run('slackUser1', '')
+
+    when:
+    commandRunner.run('slackUser2', '+1');
+    commandRunner.run('slackUser3', '+1');
+    def response = commandRunner.run('slackUser4', '+1');
+
+    then:
+    def firstTeamHasBall = response.text.contains(":football: pushqUser1 pushqUser4")
+    def secondTeamHasBall = response.text.contains("pushqUser2 pushqUser3 :football:")
+    (firstTeamHasBall || secondTeamHasBall)
   }
 
   def "should remove requesting user from players list when executing command: '-1''"() {

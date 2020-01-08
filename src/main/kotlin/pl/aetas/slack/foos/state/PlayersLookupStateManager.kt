@@ -5,7 +5,7 @@ import pl.aetas.slack.foos.mapping.Player
 import pl.aetas.slack.foos.mapping.UnknownPushqUsername
 import pl.aetas.slack.foos.mapping.UserMappingService
 import pl.aetas.slack.foos.pushq.PushqSystem
-import java.net.ConnectException
+import kotlin.random.Random
 
 class PlayersLookupStateManager(private val userMappingService: UserMappingService,
                                 private val lookupState: PlayersLookupState,
@@ -32,7 +32,7 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
                     "You are not registered yet. Register with \"/foos register [your_username]\".")
         }
         try {
-            lookupState.start(player);
+            lookupState.start(player)
         } catch (e: IllegalStateChangeException) {
             return SlackResponse(SlackResponseType.ephemeral,
                     "Someone else is already looking for players. Use \"/foos +1\" instead.")
@@ -48,7 +48,7 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
                     "User $pushqUsername is not registered. Ask user to register with \"/foos register [username]\".")
         }
 
-        return addPlayer(player);
+        return addPlayer(player)
     }
 
     fun addPlayerBySlackUsername(slackUsername: String): SlackResponse {
@@ -64,7 +64,7 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
 
     private fun addPlayer(player: Player): SlackResponse {
         try {
-            lookupState.addPlayer(player);
+            lookupState.addPlayer(player)
         } catch (e: IllegalStateChangeException) {
             return SlackResponse(SlackResponseType.ephemeral,
                     "ERROR: No one has started to look for players. Start with \"/foos\".")
@@ -74,27 +74,28 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
         }
 
         if (lookupState.state() == PlayersLookupState.State.FINISHED) {
-            var response: SlackResponse;
+            var response: SlackResponse
             try {
                 val teams = teamsCalculator.calculateTeams(pushqSystem.ranking(), lookupState.players)
                 val redPlayers = teams.first.players.map { it.pushqUsername }
                 val bluePlayers = teams.second.players.map { it.pushqUsername }
+                val teamWithBall = Random.nextInt(0, 2)
                 val playersAsQueryParams = "playerRed1=${redPlayers.get(0)}&playerRed2=${redPlayers.get(1)}" +
                         "&playerBlue1=${bluePlayers.get(0)}&playerBlue2=${bluePlayers.get(1)}"
                 val slackPlayers: String = teams.first.players.map { it.slackUsername }.joinToString { "<@$it> " } + teams.second.players.map { it.slackUsername }.joinToString { "<@$it> " }
                 response = SlackResponse(SlackResponseType.in_channel,
-                        "Let's play a game! ${teams.first} : ${teams.second}\n" +
+                        "Let's play a game! ${insertBall(teamWithBall, 0)} ${teams.first} : ${teams.second} ${insertBall(teamWithBall, 1)}\n" +
                                 "$slackPlayers: go go go!\n" +
                                 "Have you won? Insert result " +
                                 "<${PUSHQ_URL_WEB_REGISTER}?${playersAsQueryParams}|here>.")
-                lookupState.reset();
+                lookupState.reset()
             } catch (e: Exception) {
                 val slackPlayers: String = lookupState.players.map { it.slackUsername }.joinToString { "<@$it> " }
                 response = SlackResponse(SlackResponseType.in_channel,
                         ":electric_plug: Just play... randomly: $slackPlayers\n" +
                                 "Pushq's server is gone :coffin:\n" +
                                 "Have you won? Write result on whiteboard!")
-                lookupState.reset();
+                lookupState.reset()
             }
 
             return response
@@ -103,6 +104,10 @@ class PlayersLookupStateManager(private val userMappingService: UserMappingServi
         return SlackResponse(SlackResponseType.in_channel,
                 "+${player.slackUsername} joined the game (${listPlayers(lookupState.players)}).\n" +
                         "${lookupState.playersMissing()} more needed!")
+    }
+
+    private fun insertBall(teamWithBall: Int, teamNumber: Int): String {
+        return if (teamWithBall == teamNumber) ":football:" else ""
     }
 
     private fun listPlayers(players: Collection<Player>) = players.map { it.pushqUsername }.joinToString(", ")
