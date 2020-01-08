@@ -57,9 +57,5 @@ jib {
   }
   to {
     image = "maniekq/${project.name}:${project.version}"
-    auth {
-      username = 'maniekq'
-      password = project.dockerHubPasswor
-    }
   }
 }

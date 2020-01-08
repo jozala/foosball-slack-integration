@@ -16,5 +16,5 @@
 1. Change version number in build.gradle
 2. Run command to push new Docker image
     ```bash
-    ./gradlew jib -PdockerHubPassword=***********
+    ./gradlew jib
     ```
